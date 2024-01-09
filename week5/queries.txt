@@ -1,0 +1,32 @@
+select * from Sailors S where S.age = 18 and rating > 9 ;
+
+select R.sid, MIN(R.rdate) from Reserve R where R.sid < 5 group by R.sid ;
+
+select count(*) from Reserve R, Sailors S where R.sid = S.sid and S.age = 18 ;
+
+select S.name, S.age, B.name 
+from Sailors S, Boats B, Reserve R 
+where R.sid = S.sid and R.bid = B.bid and R.rdate = "2019-01-23" and S.age >= 40 order by S.age ;
+
+select * from Boats B where B.bcolor = "Pumpkin" and B.ratingNeeded = (select MAX(ratingNeeded) from Boats) ;
+
+select S.name, S.rating, B.ratingNeeded, B.bid 
+from Sailors S, Reserve R, Boats B 
+where S.sid = R.sid and R.bid = B.bid and S.rating < B.ratingNeeded and S.age = 18 
+order by S.sid ;
+
+select S.sid, count(*) 
+from Sailors S, Reserve R, Boats B 
+where S.sid = R.sid and R.bid = B.bid and S.rating < B.ratingNeeded and S.age = 18 
+group by S.sid 
+order by S.sid ;
+
+select S.age, avg(S.rating) from Sailors S where S.age > 30 and S.age < 40 group by S.age order by S.age ;
+
+select S.age, avg(S.rating) 
+from Sailors S 
+where S.age > 30 and S.age < 40 
+group by S.age 
+having count(*) >= 30 
+order by S.age ;
+
