@@ -1,0 +1,441 @@
+PART 1
+------
+
+Q1) db.thePeople.find(numChildren: 7)
+
+Q2) db.thePeople.find({numChildren: 7}, {pid: 1, state: 1, children: 1})
+
+Q3) db.thePeople.find({state: 'CA', numChildren: 6})
+
+Q4) db.thePeople.find({state: 'CA', numChildren: { $in: [6, 7] }})
+
+[
+  {
+    _id: ObjectId("640805d22126eb7d53caa9f8"),
+    pid: 467,
+    firstName: 'Priya',
+    MI: 'M',
+    lastName: 'Martinez',
+    state: 'CA',
+    age: 24,
+    birth: 1995,
+    salary: 70797,
+    numChildren: 6,
+    children: [
+      'Santiago N Martinez',
+      'Bob Y Martinez',
+      'Sofia Y Martinez',
+      'Linda N Martinez',
+      'Daniella C Martinez',
+      'William V Martinez'
+    ],
+    weight: 89,
+    height: 180
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad06"),
+    pid: 1249,
+    firstName: 'Linda',
+    MI: 'S',
+    lastName: 'Gonzalez',
+    state: 'CA',
+    age: 26,
+    birth: 1993,
+    salary: 72713,
+    numChildren: 6,
+    children: [
+      'Ashley P Gonzalez',
+      'Vivek W Gonzalez',
+      'Vivek Y Gonzalez',
+      'Ashley Q Gonzalez',
+      'Ashley E Gonzalez',
+      'John W Gonzalez'
+    ],
+    weight: 45,
+    height: 167
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caaedc"),
+    pid: 1719,
+    firstName: 'Jayla',
+    MI: 'J',
+    lastName: 'Liu',
+    state: 'CA',
+    age: 116,
+    birth: 1903,
+    salary: 77104,
+    numChildren: 7,
+    children: [
+      'Priya Z Liu',
+      'Sarah W Liu',
+      'Peter U Liu',
+      'Sofia R Liu',
+      'William X Liu',
+      'John D Liu',
+      'Mary Y Liu'
+    ],
+    weight: 81,
+    height: 161
+  }
+]
+
+Q5) db.thePeople.find({children: { $regex: 'Bob A'  }}, {pid: 1, children: 1})
+
+[
+  {
+    _id: ObjectId("640805d22126eb7d53caa827"),
+    pid: 2,
+    children: [ 'Vicky U Wilson', 'Noah X Wilson', 'Bob A Wilson' ]
+  },
+  {
+    _id: ObjectId("640805d22126eb7d53caa977"),
+    pid: 338,
+    children: [
+      'Madison J Li',
+      'Madison B Li',
+      'Rahul E Li',
+      'Neha J Li',
+      'Bob A Li',
+      'Hasan A Li',
+      'Raj C Li'
+    ]
+  },
+  {
+    _id: ObjectId("640805d22126eb7d53caac35"),
+    pid: 1040,
+    children: [ 'Bob A Zhao', 'Tanya F Zhao', 'Vicky M Zhao' ]
+  },
+  {
+    _id: ObjectId("640805d22126eb7d53caacdf"),
+    pid: 1210,
+    children: [
+      'Kayla W Jackson',
+      'Bob A Jackson',
+      'Rahul S Jackson',
+      'Vivek J Jackson'
+    ]
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caada8"),
+    pid: 1411,
+    children: [ 'Neha C Chan', 'Bob A Chan', 'Tanya K Chan', 'Jayla C Chan' ]
+  }
+]
+
+Q6) db.thePeople.aggregate([{ $match: { "numChildren": { $lte: 8 }}}, { $group: { _id: "$numChildren", count: { $count: {}}}}, { $sort: { _id: 1 }}])
+
+Q7) db.thePeople.aggregate([{ $group: { _id: "$state", avgSalary: { $avg: "$salary" }, numInGroup: { $count: {} }}}, { $sort: { _id: 1 }}])
+
+Q8) db.thePeople.aggregate([{ $match: { state: 'WI' }}, { $group: { _id: "$state", avgSalary: { $avg: "$salary" }, numInGroup: { $count: {} }}}, { $sort: { _id: 1 }}])
+
+Q9) db.thePeople.aggregate([ { $match: { state: { $in: ['ND','SD','NE','KS','MN','IA','MS','WI','IL','IN','MI','OH'] } }}, { $group: { _id: "$state", avgSalary: { $avg: "$salary" }, minSalary: { $min: "$salary" }, maxSalary: { $max: "$salary" }, numInGroup: { $count: {} }}}, { $sort: { _id: 1 }}]) 
+
+[
+  {
+    _id: 'IA',
+    avgSalary: 84773.19230769231,
+    minSalary: 32278,
+    maxSalary: 129977,
+    numInGroup: 26
+  },
+  {
+    _id: 'IL',
+    avgSalary: 80329.17948717948,
+    minSalary: 32045,
+    maxSalary: 127126,
+    numInGroup: 39
+  },
+  {
+    _id: 'IN',
+    avgSalary: 80722.02564102564,
+    minSalary: 32116,
+    maxSalary: 128675,
+    numInGroup: 39
+  },
+  {
+    _id: 'KS',
+    avgSalary: 82822.25,
+    minSalary: 30954,
+    maxSalary: 129962,
+    numInGroup: 36
+  },
+  {
+    _id: 'MI',
+    avgSalary: 77196.51351351352,
+    minSalary: 35749,
+    maxSalary: 128868,
+    numInGroup: 37
+  },
+  {
+    _id: 'MN',
+    avgSalary: 79788.08333333333,
+    minSalary: 31425,
+    maxSalary: 125317,
+    numInGroup: 36
+  },
+  {
+    _id: 'MS',
+    avgSalary: 76276.27272727272,
+    minSalary: 30342,
+    maxSalary: 127985,
+    numInGroup: 44
+  },
+  {
+    _id: 'ND',
+    avgSalary: 92167.31818181818,
+    minSalary: 38172,
+    maxSalary: 129437,
+    numInGroup: 44
+  },
+  {
+    _id: 'NE',
+    avgSalary: 72756.17391304347,
+    minSalary: 30179,
+    maxSalary: 129283,
+    numInGroup: 46
+  },
+  {
+    _id: 'OH',
+    avgSalary: 81560.09302325582,
+    minSalary: 31223,
+    maxSalary: 129487,
+    numInGroup: 43
+  },
+  {
+    _id: 'SD',
+    avgSalary: 81560.26,
+    minSalary: 34495,
+    maxSalary: 129228,
+    numInGroup: 50
+  },
+  {
+    _id: 'WI',
+    avgSalary: 81550.875,
+    minSalary: 34027,
+    maxSalary: 124138,
+    numInGroup: 24
+  }
+]
+
+Q10) db.thePeople.aggregate([{ $group: { _id: "$state", avgSalary: { $avg: "$salary" }, numInGroup: { $count: {}}}}, { $match: { avgSalary: { $gte: 82000 }}}, { $sort: { _id: 1 }}])
+
+[
+  { _id: 'AK', avgSalary: 86931.97619047618, numInGroup: 42 },
+  { _id: 'CO', avgSalary: 83968.02222222222, numInGroup: 45 },
+  { _id: 'CT', avgSalary: 86389.48148148147, numInGroup: 27 },
+  { _id: 'FL', avgSalary: 85303.60869565218, numInGroup: 46 },
+  { _id: 'GA', avgSalary: 85883.92307692308, numInGroup: 39 },
+  { _id: 'IA', avgSalary: 84773.19230769231, numInGroup: 26 },
+  { _id: 'KS', avgSalary: 82822.25, numInGroup: 36 },
+  { _id: 'MD', avgSalary: 82684.55555555556, numInGroup: 45 },
+  { _id: 'ND', avgSalary: 92167.31818181818, numInGroup: 44 },
+  { _id: 'NJ', avgSalary: 91666.93103448275, numInGroup: 29 },
+  { _id: 'NM', avgSalary: 84028.53488372093, numInGroup: 43 },
+  { _id: 'NY', avgSalary: 83155.72222222222, numInGroup: 54 },
+  { _id: 'OK', avgSalary: 82044.42424242424, numInGroup: 33 },
+  { _id: 'TN', avgSalary: 90134, numInGroup: 29 },
+  { _id: 'UT', avgSalary: 82353.93023255814, numInGroup: 43 }
+]
+
+Q11) db.thePeople.aggregate([ { $match: { state: { $in: ['ND','SD','NE','KS','MN','IA','MS','WI','IL','IN','MI','OH'] } }}, { $group: { _id: "$state", avgSalary: { $avg: "$salary" }, minSalary: { $min: "$salary" }, maxSalary: { $max: "$salary" }, numInGroup: { $count: {} }}}, { $match: { avgSalary: { $gte: 82000 }}}, { $sort: { _id: 1 }}]) 
+
+[
+  {
+    _id: 'IA',
+    avgSalary: 84773.19230769231,
+    minSalary: 32278,
+    maxSalary: 129977,
+    numInGroup: 26
+  },
+  {
+    _id: 'KS',
+    avgSalary: 82822.25,
+    minSalary: 30954,
+    maxSalary: 129962,
+    numInGroup: 36
+  },
+  {
+    _id: 'ND',
+    avgSalary: 92167.31818181818,
+    minSalary: 38172,
+    maxSalary: 129437,
+    numInGroup: 44
+  }
+]
+
+
+PART 2
+------
+
+# Add another child for Jennifer Johnson
+db.thePeople.find({firstName: "Jennifer", lastName: "Johnson", state: 'NY'}, {firstName: 1, MI: 1, lastName: 1, numChildren: 1, children: 1})
+[
+  {
+    _id: ObjectId("640805d32126eb7d53caaeb0"),
+    firstName: 'Jennifer',
+    MI: 'A',
+    lastName: 'Johnson',
+    numChildren: 4,
+    children: [
+      'Peter R Johnson',
+      'Diego W Johnson',
+      'Sarah T Johnson',
+      'Kayla J Johnson'
+    ]
+  }
+]
+
+db.thePeople.updateOne({firstName: "Jennifer", lastName: "Johnson", state: 'NY'}, { $push: { children: 'Henry B Johnson' }, $inc: { numChildren: 1}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+db.thePeople.find({firstName: "Jennifer", lastName: "Johnson", state: 'NY'}, {firstName: 1, MI: 1, lastName: 1, numChildren: 1, children: 1})
+[
+  {
+    _id: ObjectId("640805d32126eb7d53caaeb0"),
+    firstName: 'Jennifer',
+    MI: 'A',
+    lastName: 'Johnson',
+    numChildren: 5,
+    children: [
+      'Peter R Johnson',
+      'Diego W Johnson',
+      'Sarah T Johnson',
+      'Kayla J Johnson',
+      'Henry B Johnson'
+    ]
+  }
+]
+
+# Increase all NY salaries prior to 1910 by 10%
+db.thePeople.find({ birth: { $lt: 1910 }, state: 'NY'}, {pid: 1, birth: 1, salary: 1})
+[
+  {
+    _id: ObjectId("640805d22126eb7d53caa868"),
+    pid: 67,
+    birth: 1903,
+    salary: 98342
+  },
+  {
+    _id: ObjectId("640805d22126eb7d53caaca7"),
+    pid: 1154,
+    birth: 1903,
+    salary: 100890
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad20"),
+    pid: 1275,
+    birth: 1906,
+    salary: 69262
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad36"),
+    pid: 1297,
+    birth: 1907,
+    salary: 30401
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad8e"),
+    pid: 1385,
+    birth: 1906,
+    salary: 122105
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caae40"),
+    pid: 1563,
+    birth: 1905,
+    salary: 39435
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caae5b"),
+    pid: 1590,
+    birth: 1908,
+    salary: 41669
+  }
+]
+
+db.thePeople.updateMany({ birth: { $lt: 1910 }, state: 'NY'}, { $mul: { salary: 1.1 }})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 7,
+  modifiedCount: 7,
+  upsertedCount: 0
+}
+
+db.thePeople.find({ birth: { $lt: 1910 }, state: 'NY'}, {pid: 1, birth: 1, salary: 1})
+[
+  {
+    _id: ObjectId("640805d22126eb7d53caa868"),
+    pid: 67,
+    birth: 1903,
+    salary: 108176.20000000001
+  },
+  {
+    _id: ObjectId("640805d22126eb7d53caaca7"),
+    pid: 1154,
+    birth: 1903,
+    salary: 110979.00000000001
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad20"),
+    pid: 1275,
+    birth: 1906,
+    salary: 76188.20000000001
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad36"),
+    pid: 1297,
+    birth: 1907,
+    salary: 33441.100000000006
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caad8e"),
+    pid: 1385,
+    birth: 1906,
+    salary: 134315.5
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caae40"),
+    pid: 1563,
+    birth: 1905,
+    salary: 43378.5
+  },
+  {
+    _id: ObjectId("640805d32126eb7d53caae5b"),
+    pid: 1590,
+    birth: 1908,
+    salary: 45835.9
+  }
+]
+
+# Delete documents where number of children is 0 or 1 and salary is less than $40K.
+db.thePeople.aggregate({$match: { salary: {$lt: 40000}}},{$group: {_id:"$numChildren", minSalary: {$min: "$salary"}, maxSalary: {$max: "$salary"}, count: {$count: {}}}}, {$sort: {_id: 1}})
+[
+  { _id: 0, minSalary: 32018, maxSalary: 36386, count: 5 },
+  { _id: 1, minSalary: 30179, maxSalary: 39841, count: 15 },
+  { _id: 2, minSalary: 30954, maxSalary: 39995, count: 37 },
+  { _id: 3, minSalary: 30187, maxSalary: 39938, count: 63 },
+  { _id: 4, minSalary: 30291, maxSalary: 39868, count: 49 },
+  { _id: 5, minSalary: 30328, maxSalary: 39941, count: 20 },
+  { _id: 6, minSalary: 30717, maxSalary: 39361, count: 8 },
+  { _id: 7, minSalary: 30933, maxSalary: 39859, count: 3 }
+]
+
+db.thePeople.deleteMany({salary: {$lt: 40000}, numChildren: {$in: [0,1]}})
+{ acknowledged: true, deletedCount: 20 }
+
+db.thePeople.aggregate({$match: { salary: {$lt: 40000}}},{$group: {_id:"$numChildren", minSalary: {$min: "$salary"}, maxSalary: {$max: "$salary"}, count: {$count: {}}}}, {$sort: {_id: 1}})
+[
+  { _id: 2, minSalary: 30954, maxSalary: 39995, count: 37 },
+  { _id: 3, minSalary: 30187, maxSalary: 39938, count: 63 },
+  { _id: 4, minSalary: 30291, maxSalary: 39868, count: 49 },
+  { _id: 5, minSalary: 30328, maxSalary: 39941, count: 20 },
+  { _id: 6, minSalary: 30717, maxSalary: 39361, count: 8 },
+  { _id: 7, minSalary: 30933, maxSalary: 39859, count: 3 }
+]
