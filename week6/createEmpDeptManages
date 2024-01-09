@@ -1,0 +1,62 @@
+# this example is used for an outer joins exercise to find out:
+#   a) which employees do not work for any department
+#   b) which departments do not have any employees working for that department
+
+drop table if exists WorksFor ;
+drop table if exists Employee ;
+drop table if exists Department ;
+
+create table Employee (
+  eid int,
+  name varchar(20),
+  age int,
+  salary float,
+  residenceState char(2),
+  startDate date,
+  Primary Key (eid) ) ;
+
+create table Department (
+  did int,
+  name varchar(20),
+  floor int,
+  supplyBudget float,
+  stateLocated char(2),
+  PRIMARY KEY (did) ) ;
+
+create table WorksFor (
+  eid int,
+  did int, 
+  startDate date,
+  PRIMARY KEY (did,eid),
+  Foreign Key (did) references Department(did),
+  Foreign Key (eid) references Employee(eid) ) ;
+
+create table Manages (
+  eid int,
+  did int,
+  managesStartDate date,
+  Primary Key (eid,did),
+  Foreign Key (eid) references employee (eid),
+  Foreign Key (did) references department (did) );
+
+
+load data local infile '/Users/zjfran/Documents/Database_Management/week6/assignment/data_emps' into table Employee
+  fields terminated by ','
+    lines terminated by '\n'
+  ;
+
+load data local infile '/Users/zjfran/Documents/Database_Management/week6/assignment/data_depts' into table Department
+  fields terminated by ','
+    lines terminated by '\n'
+  ;
+
+load data local infile '/Users/zjfran/Documents/Database_Management/week6/assignment/data_worksFor' into table WorksFor
+  fields terminated by ','
+    lines terminated by '\n'
+  ;
+
+load data local infile '/Users/zjfran/Documents/Database_Management/week6/assignment/data_manages' into table Manages
+  fields terminated by ','
+    lines terminated by '\n'
+  ;
+

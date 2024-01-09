@@ -1,0 +1,158 @@
+Q1: Find all information about managers who are 25 years old or younger and live in California (‘CA’).
+
+select * from Employee E inner join Manages M on E.eid = M.eid where E.age <= 25 and E.residenceState = 'CA' ;
+
++------+-----------+------+--------+----------------+------------+------+-----+------------------+
+| eid  | name      | age  | salary | residenceState | startDate  | eid  | did | managesStartDate |
++------+-----------+------+--------+----------------+------------+------+-----+------------------+
+| 2937 | Sally2937 |   22 |  65000 | CA             | 2017-04-05 | 2937 | 214 | 2017-01-06       |
+| 3172 | Sally3172 |   20 |  36475 | CA             | 2017-10-02 | 3172 | 132 | 2017-05-22       |
++------+-----------+------+--------+----------------+------------+------+-----+------------------+
+2 rows in set (0.01 sec)
+
+
+Q2: Find the name, salary, age, and residence state of all 20- year-old or younger managers who live in Indiana (‘IN’).
+
+select E.name, E.salary, E.age, E.residenceState 
+from Employee E join Manages M on E.eid = M.eid 
+where E.age <= 20 and E.residenceState = 'IN' ;
+
+Empty set (0.01 sec)
+
+
+Q3: Find the names and salary of 25-year-old employees who work for departments located on the fourth floor in Alaska (‘AK’).
+
+select E.name from Employee E, WorksFor W, Department D 
+where E.eid = W.eid and W.did = D.did and E.age = 25 and D.stateLocated = 'AK' and D.floor = 4 ;
+
++-----------+
+| name      |
++-----------+
+| Sally3122 |
++-----------+
+1 row in set (0.01 sec)
+
+
+Q4: Find the name, salary, and EID of 49-year-old employees who work for a department located in Alaska (‘AK’) but live in California (‘CA’).
+
+select E.name, E.salary, E.eid from Employee E, WorksFor W, Department D 
+where E.eid = W.eid and W.did = D.did and D.stateLocated = 'AK' and E.residenceState = 'CA' and E.age = 49 ;
+
++-----------+--------+------+
+| name      | salary | eid  |
++-----------+--------+------+
+| Sally4280 |  69137 | 4280 |
++-----------+--------+------+
+1 row in set (0.00 sec)
+
+
+Q5: Find the total number of employees.
+
+select count(*) from Employee ;
+
++----------+
+| count(*) |
++----------+
+|    10000 |
++----------+
+1 row in set (0.00 sec)
+
+
+Q6: Find the number of employees who are managers. 
+
+select count(distinct eid) from Manages ;
+
++---------------------+
+| count(distinct eid) |
++---------------------+
+|                 485 |
++---------------------+
+1 row in set (0.01 sec)
+
+
+Q7: Find the number of employees who are not managers.
+
+select count(*) from Employee E where E.eid not in (select eid from Manages) ;
+
++----------+
+| count(*) |
++----------+
+|     9515 |
++----------+
+1 row in set (0.05 sec)
+
+
+Q8: Find the (eid,number) pair for employees who are managing two or more departments where "number" is the number of departments they are managing.
+
+select E.eid, count(*) from Employee E, Manages M where E.eid = M.eid group by E.eid having count(*) >= 2 ;
+
++------+----------+
+| eid  | count(*) |
++------+----------+
+| 1230 |        2 |
+| 9226 |        2 |
+| 1085 |        2 |
+| 1822 |        2 |
+| 7096 |        2 |
+| 7025 |        2 |
+| 8601 |        2 |
+| 5164 |        2 |
+| 9077 |        2 |
+| 6244 |        2 |
+| 7925 |        2 |
+| 6379 |        2 |
+| 7283 |        2 |
+| 2447 |        2 |
+| 2093 |        2 |
++------+----------+
+15 rows in set (0.00 sec)
+
+
+Q9: Present the (name1, salary1, name2, salary2), where salary1 is the salary of the employee with name1 and salary2 corresponds with name2, of all employee pairs where both are living in California (‘CA’), one is a 24-year-old manager, the other (who can be any age) is not a manager, and the manager earns more than three times the other employee.
+
+select E1.name, E1.salary, E2.name, E2.salary from Employee E1, Employee E2, Manages M 
+where E1.eid <> E2.eid and E1.eid = M.eid and E1.age = 24 
+and E1.salary > (3 * E2.salary) and E1.residenceState = 'CA' and E2.residenceState = 'CA' ;
+
+Empty set (0.00 sec)
+
+
+Q10: For each department in Alaska ('AK') that has 25 or more employees working for it and a supply budget < $7,000, present the did, budget, and number of employees that work in that department.
+
+select D.did, D.supplyBudget, count(W.eid) from Department D, WorksFor W 
+where D.did = W.did and D.stateLocated = 'AK' and D.supplyBudget > 7000 
+group by D.did having count(W.eid) > 25 ;
+
++-----+--------------+--------------+
+| did | supplyBudget | count(W.eid) |
++-----+--------------+--------------+
+| 141 |         8238 |           29 |
+| 213 |         9209 |           29 |
+| 283 |         7345 |           30 |
+| 309 |         7992 |           26 |
+| 329 |         8723 |           31 |
+| 349 |         8177 |           30 |
+| 461 |         7044 |           30 |
+| 471 |         8023 |           26 |
++-----+--------------+--------------+
+8 rows in set (0.04 sec)
+
+
+Q11: For each state, present the salary of the average 20-year- old manager (i.e., average salary of mangers who are 20 years old) who lives in that state and the number of such managers. Note: Your results can omit states that do not have any 20-year- old managers living in them.
+
+select E.residenceState, AVG(E.salary), COUNT(*) from Employee E, Manages M 
+where E.eid = M.eid and E.age = 20 
+group by E.residenceState ;
+
++----------------+---------------+----------+
+| residenceState | AVG(E.salary) | COUNT(*) |
++----------------+---------------+----------+
+| MD             |         56635 |        2 |
+| AK             |         62004 |        1 |
+| IL             |       52069.5 |        2 |
+| CA             |         36475 |        1 |
+| HI             |         45921 |        1 |
+| ME             |         50546 |        2 |
+| CT             |         62845 |        1 |
++----------------+---------------+----------+
+7 rows in set (0.00 sec)
